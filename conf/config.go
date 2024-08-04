@@ -1,0 +1,99 @@
+package conf
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"gopkg.in/yaml.v3"
+)
+
+type Config struct {
+	RoomConfig       RoomConfig `yaml:"RoomConfig"`
+	MailConfig       MailConfig `yaml:"MailConfig"`
+	WarningThreshold float64    `yaml:"WarningThreshold"` // 报警阈值
+}
+
+type RoomConfig struct {
+	PartmentId string `yaml:"partmentId"`
+	FloorId    string `yaml:"floorId"`
+	DromNumber string `yaml:"dromNumber"`
+	AreaId     string `yaml:"areaId"`
+	Cookie     string `yaml:"cookie"`
+}
+
+type MailConfig struct {
+	From     string   `yaml:"from"`
+	EnvTo    string   `yaml:"envTo"`
+	To       []string `yaml:"to"`
+	Secret   string   `yaml:"secret"`
+	Host     string   `yaml:"host"`
+	Port     int      `yaml:"port"`
+	Nickname string   `yaml:"nickname"`
+	Subject  string   `yaml:"subject"`
+	Body     string   `yaml:"body"`
+	Ssl      bool     `yaml:"ssl"`
+}
+
+var config *Config
+
+func findMainGo(dir string) (string, error) {
+	if _, err := os.Stat(filepath.Join(dir, "main.go")); err == nil {
+		return dir, nil
+	}
+
+	parentDir := filepath.Dir(dir)
+	if parentDir == dir {
+		return "", fmt.Errorf("could not find 'main.go' in the current or any parent directory")
+	}
+
+	return findMainGo(parentDir)
+}
+
+func getConfigPath() string {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting current directory:", err)
+		panic(err)
+	}
+
+	dirWithMainGo, err := findMainGo(currentDir)
+	if err != nil {
+		fmt.Println("Error finding root path 'main.go':", err)
+		panic(err)
+	}
+
+	return filepath.Join(dirWithMainGo, "conf", "config.yml")
+}
+
+// 从环境变量读取一些配置
+func readConfigFromEnv(conf *Config) {
+	conf.RoomConfig.Cookie = os.Getenv(conf.RoomConfig.Cookie)
+
+	conf.MailConfig.From = os.Getenv(conf.MailConfig.From)
+	conf.MailConfig.To = strings.Split(os.Getenv(conf.MailConfig.EnvTo), ",")
+	conf.MailConfig.Secret = os.Getenv(conf.MailConfig.Secret)
+}
+
+func init() {
+	dataBytes, err := os.ReadFile(getConfigPath())
+	if err != nil {
+		fmt.Println("Error reading config file:", err)
+		panic(err)
+	}
+
+	config = &Config{}
+	err = yaml.Unmarshal(dataBytes, &config)
+	if err != nil {
+		fmt.Println("Error unmarshalling config:", err)
+		panic(err)
+	}
+	readConfigFromEnv(config)
+
+	fmt.Printf("config init success, config: %+v\n", config)
+}
+
+func GetConfig() *Config {
+	return config
+}

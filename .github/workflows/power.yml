@@ -1,0 +1,31 @@
+name: Power Warning
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: "0 0/3 * * *"
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    env:
+      # 定义环境变量
+      COOKIE: ${{secrets.COOKIE}}
+      FROM: ${{secrets.FROM}}
+      TO:    ${{{secrets.TO}}}
+      SECRET: ${{{secrets.SECRET}}}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20' 
+
+    - name: Run application
+      run: |
+        go mod tidy
+        go run main.go
