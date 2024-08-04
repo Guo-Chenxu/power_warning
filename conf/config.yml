@@ -17,4 +17,4 @@ MailConfig:
     body: 电费即将用完，请及时充值
     ssl: true
 
-WarningThreshold: 100
+WarningThreshold: 20
