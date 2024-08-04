@@ -16,7 +16,6 @@ func main() {
 		fmt.Println("获取电量余额出现错误：", err)
 		return
 	}
-
 	fmt.Println("当前电量信息：", power)
 
 	if power.D.Data.Surplus < config.WarningThreshold {
