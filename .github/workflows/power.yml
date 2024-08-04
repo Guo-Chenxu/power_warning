@@ -10,7 +10,6 @@ jobs:
   build-and-run:
     runs-on: ubuntu-latest
     env:
-      # 定义环境变量
       COOKIE: ${{ secrets.COOKIE }}
       FROM: ${{ secrets.FROM }}
       TO:    ${{ secrets.TO }}

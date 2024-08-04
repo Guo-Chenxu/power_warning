@@ -37,6 +37,7 @@ type MailConfig struct {
 }
 
 var config *Config
+var env string = os.Getenv("ENV")
 
 func findMainGo(dir string) (string, error) {
 	if _, err := os.Stat(filepath.Join(dir, "main.go")); err == nil {
@@ -64,7 +65,12 @@ func getConfigPath() string {
 		panic(err)
 	}
 
-	return filepath.Join(dirWithMainGo, "conf", "config.yml")
+	configFile := "config.yml"
+	if env != "" {
+		configFile = fmt.Sprintf("config-%s.yml", env)
+	}
+
+	return filepath.Join(dirWithMainGo, "conf", configFile)
 }
 
 // 从环境变量读取一些配置
@@ -89,7 +95,9 @@ func init() {
 		fmt.Println("Error unmarshalling config:", err)
 		panic(err)
 	}
-	readConfigFromEnv(config)
+	if env != "local" {
+		readConfigFromEnv(config)
+	}
 
 	fmt.Printf("config init success, config: %+v\n", config)
 }
