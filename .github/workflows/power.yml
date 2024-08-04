@@ -10,11 +10,10 @@ jobs:
   build-and-run:
     runs-on: ubuntu-latest
     env:
-      # 定义环境变量
-      COOKIE: ${{secrets.COOKIE}}
-      FROM: ${{secrets.FROM}}
-      TO:    ${{{secrets.TO}}}
-      SECRET: ${{{secrets.SECRET}}}
+      COOKIE: ${{SECRETS.COOKIE}}
+      FROM: ${{SECRETS.FROM}}
+      TO:    ${{{SECRETS.TO}}}
+      SECRET: ${{{SECRETS.SECRET}}}
 
     steps:
     - name: Checkout code
