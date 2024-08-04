@@ -18,7 +18,9 @@ func main() {
 	fmt.Println("当前电量信息：", power)
 
 	if power.D.Data.Surplus < config.WarningThreshold {
-		fmt.Println("电量余额低于阈值，请及时充电！")
+		content := fmt.Sprintf("电量余额低于阈值，请及时充电！\n告警阈值：%.2f，剩余电量：%.2f", config.WarningThreshold, power.D.Data.Surplus)
+		fmt.Println(content)
+		config.MailConfig.Body = content
 		if err := logic.SendEmail(config.MailConfig); err != nil {
 			fmt.Println("发送邮件警告出现错误：", err)
 		} else {
