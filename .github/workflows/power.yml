@@ -4,7 +4,18 @@ on:
   push:
     branches: [ main ]
   schedule:
-    - cron: "0 0/3 * * *"
+    # 两个小时执行一次，0-5 点除外
+    # 这个时间内获取电费信息点接口会失效（0-3）
+    - cron: '30 5 * * *'
+    - cron: '30 7 * * *'
+    - cron: '30 9 * * *'
+    - cron: '30 11 * * *'
+    - cron: '30 13 * * *'
+    - cron: '30 15 * * *'
+    - cron: '30 17 * * *'
+    - cron: '30 19 * * *'
+    - cron: '30 21 * * *'
+    - cron: '30 23 * * *'
 
 jobs:
   build-and-run:
