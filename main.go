@@ -21,15 +21,17 @@ func main() {
 	}
 	fmt.Printf("当前电量信息：%+v\n", power)
 
+	if power.D.Data.Time == "" {
+		// 查询错误终止
+		content := fmt.Sprintf("查询错误，未查询到信息<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
+			config.WarningThreshold, power.D.Data.Surplus, time.Now().In(loc).Format("2006-01-02 15:04:05"))
+		fmt.Println(content)
+		return
+	}
+
 	if power.D.Data.Surplus < config.WarningThreshold {
-		content := ""
-		if power.D.Data.Time == "" {
-			content = fmt.Sprintf("查询错误，未查询到信息<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
-				config.WarningThreshold, power.D.Data.Surplus, time.Now().In(loc).Format("2006-01-02 15:04:05"))
-		} else {
-			content = fmt.Sprintf("电量余额低于阈值，请及时充电！<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
-				config.WarningThreshold, power.D.Data.Surplus, power.D.Data.Time)
-		}
+		content := fmt.Sprintf("电量余额低于阈值，请及时充电！<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
+			config.WarningThreshold, power.D.Data.Surplus, power.D.Data.Time)
 		fmt.Println(content)
 		config.MailConfig.Body = content + "<br><br>" + star
 
