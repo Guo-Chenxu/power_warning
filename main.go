@@ -12,8 +12,6 @@ const star = "如果觉得本项目好用的话, 还请给个star吧 φ(゜▽�
 var loc, _ = time.LoadLocation("Asia/Shanghai") // UTC+8 时区
 
 func main() {
-	fmt.Println("test time: ", time.Now().Format("2006-01-02 15:04:05"))
-	fmt.Println("test time location: ", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 	config := conf.GetConfig()
 
 	power, err := logic.GetPower(config.RoomConfig)
