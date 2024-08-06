@@ -9,7 +9,11 @@ import (
 
 const star = "如果觉得本项目好用的话, 还请给个star吧 φ(゜▽゜*)♪ <br> 项目地址: https://github.com/Guo-Chenxu/power_warning"
 
+var loc, _ = time.LoadLocation("Asia/Shanghai") // UTC+8 时区
+
 func main() {
+	fmt.Println("test time: ", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Println("test time location: ", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 	config := conf.GetConfig()
 
 	power, err := logic.GetPower(config.RoomConfig)
@@ -17,13 +21,13 @@ func main() {
 		fmt.Println("获取电量余额出现错误：", err)
 		return
 	}
-	fmt.Println("当前电量信息：", power)
+	fmt.Printf("当前电量信息：%+v\n", power)
 
 	if power.D.Data.Surplus < config.WarningThreshold {
 		content := ""
 		if power.D.Data.Time == "" {
 			content = fmt.Sprintf("查询错误，未查询到信息<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
-				config.WarningThreshold, power.D.Data.Surplus, time.Now().Format("2006-01-02 15:04:05"))
+				config.WarningThreshold, power.D.Data.Surplus, time.Now().In(loc).Format("2006-01-02 15:04:05"))
 		} else {
 			content = fmt.Sprintf("电量余额低于阈值，请及时充电！<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
 				config.WarningThreshold, power.D.Data.Surplus, power.D.Data.Time)
