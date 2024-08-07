@@ -33,6 +33,7 @@ jobs:
         go run main.go
         exit_code=$?
         echo "exit-code=$exit_code" >> $GITHUB_OUTPUT
+        echo steps.run-go-program.outputs.exit-code
     
     - name: Checkout code failure branch
       uses: actions/checkout@v3
