@@ -49,23 +49,23 @@ jobs:
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
 
-        last_line=$(tail -n 1 ./failure/api_error.log)
+        last_line=$(tail -n 1 api_error.log)
         last_date_time=$(echo "$last_line" | awk '{print $1}')
 
         if [ -z "$last_date_time" ]; then
           echo "File is empty, appending the first entry."
-          echo "$current_date_time" >> ./failure/api_error.log
+          echo "$current_date_time" >> api_error.log
         else
           current_date=$(echo "$current_date_time" | cut -d' ' -f1)
           last_date=$(echo "$last_date_time" | cut -d' ' -f1)
 
           if [ "$current_date" != "$last_date" ]; then
             echo "Appending new date and time with a newline."
-            echo "" >> ./failure/api_error.log 
-            echo "$current_date_time" >> ./failure/api_error.log
+            echo "" >> api_error.log 
+            echo "$current_date_time" >> api_error.log
           else
             echo "Appending new time."
-            echo "$current_date_time" >> ./failure/api_error.log
+            echo "$current_date_time" >> api_error.log
           fi
         fi
 
@@ -74,6 +74,6 @@ jobs:
       uses: crazy-max/ghaction-github-pages@v3.1.0
       with:
         target_branch: failure
-        build_dir: failure
+        build_dir: ./
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
