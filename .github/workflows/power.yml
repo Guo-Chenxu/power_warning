@@ -31,12 +31,15 @@ jobs:
       id: run-go-program
       continue-on-error: true
       run: |
-        # echo ${steps.run-go-program.outputs.exit-code}
         go mod tidy
         go run main.go
         exit_code=$?
-        echo "exit-code=$exit_code" >> $GITHUB_OUTPUT
-        echo steps.run-go-program.outputs.exit-code
+        if [ $exit_code -ne 0 ]; then
+          echo "Error: Command failed with exit code $exit_code"
+          ll
+        else
+          echo "Command executed successfully"
+        fi
     
     - name: Checkout code failure branch
       uses: actions/checkout@v3
@@ -46,8 +49,6 @@ jobs:
     - name: Handle API failure
       if: steps.run-go-program.outputs.exit-code != 0
       run: |
-        ls -al ./*
-        rm -rf .github/ conf/ logic/ .gitignore go.mod go.sum main.go README.md
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
 
