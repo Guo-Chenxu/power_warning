@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"power_warning/conf"
 	"power_warning/logic"
 	"time"
@@ -22,11 +23,11 @@ func main() {
 	fmt.Printf("当前电量信息：%+v\n", power)
 
 	if power.D.Data.Time == "" {
-		// 查询错误终止
+		// 查询错误终止, 退出代码为 1
 		content := fmt.Sprintf("查询错误，未查询到信息<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
 			config.WarningThreshold, power.D.Data.Surplus, time.Now().In(loc).Format("2006-01-02 15:04:05"))
 		fmt.Println(content)
-		return
+		os.Exit(1)
 	}
 
 	if power.D.Data.Surplus < config.WarningThreshold {
