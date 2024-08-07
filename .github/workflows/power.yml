@@ -20,10 +20,6 @@ jobs:
     - name: Checkout code main branch
       uses: actions/checkout@v3
 
-    - name: Checkout code failure branch
-      uses: actions/checkout@v3
-      with:
-        ref: failure
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -38,6 +34,10 @@ jobs:
         exit_code=$?
         echo "exit-code=$exit_code" >> $GITHUB_OUTPUT
     
+    - name: Checkout code failure branch
+      uses: actions/checkout@v3
+      with:
+        ref: failure
     
     - name: Handle API failure
       if: steps.run-go-program.outputs.exit-code != 0
