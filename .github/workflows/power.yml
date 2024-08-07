@@ -28,7 +28,7 @@ jobs:
     - name: Run application
       continue-on-error: true
       run: |
-        ls -al ./*
+        echo "exit-code=1" >> $GITHUB_OUTPUT
         go mod tidy
         go run main.go
         exit_code=$?
@@ -39,6 +39,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: failure
+      run: ls -al ./*
     
     - name: Handle API failure
       if: steps.run-go-program.outputs.exit-code != 0
