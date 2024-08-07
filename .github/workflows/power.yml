@@ -76,7 +76,7 @@ jobs:
       if: steps.run-go-program.outputs.exit-code != 0
       run: |
         git config user.name "GitHub Actions"
-        git config user.email "guochenxu11@bupt.edu.cn"
+        git config user.email "actions@github.com"
         git add .
         git commit -m "Append current date and time (UTC+8) on failure"
         git push origin failure
