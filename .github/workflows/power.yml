@@ -48,7 +48,7 @@ jobs:
       if: steps.run-go-program.outputs.exit-code != 0
       run: |
         ls -al ./*
-        touch api_error.log
+        rm -rf .github/ conf/ logic/ .gitignore go.mod go.sum main.go README.md
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
 
