@@ -29,6 +29,8 @@ jobs:
       id: run-go-program
       continue-on-error: true
       run: |
+        echo "exit-code=1" >> $GITHUB_OUTPUT
+        echo steps.run-go-program.outputs.exit-code
         go mod tidy
         go run main.go
         exit_code=$?
