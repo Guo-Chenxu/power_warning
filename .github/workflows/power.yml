@@ -10,6 +10,8 @@ on:
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       COOKIE: ${{ secrets.COOKIE }}
       FROM: ${{ secrets.FROM }}
