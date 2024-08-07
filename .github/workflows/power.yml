@@ -29,7 +29,7 @@ jobs:
 
     - name: Run application
       run: |
-        ll ./*
+        ls -al ./*
         go mod tidy
         go run main.go
         exit_code=$?
