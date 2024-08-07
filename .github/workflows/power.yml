@@ -77,6 +77,6 @@ jobs:
       run: |
         git config user.name "GitHub Actions"
         git config user.email "guochenxu11@bupt.edu.cn"
-        git add api_error.log
+        git add .
         git commit -m "Append current date and time (UTC+8) on failure"
         git push origin failure
