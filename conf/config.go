@@ -36,33 +36,34 @@ type MailConfig struct {
 	Ssl      bool     `yaml:"ssl"`
 }
 
-var config *Config
+var config Config
 var env string = os.Getenv("ENV")
 
-func findMainGo(dir string) (string, error) {
-	if _, err := os.Stat(filepath.Join(dir, "main.go")); err == nil {
-		return dir, nil
+func getProjectPath() (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
 	}
 
-	parentDir := filepath.Dir(dir)
-	if parentDir == dir {
-		return "", fmt.Errorf("could not find 'main.go' in the current or any parent directory")
-	}
+	for {
+		info, err := os.Stat(filepath.Join(cwd, "main.go"))
+		if err == nil && !info.IsDir() {
+			return cwd, nil
+		} else if !os.IsNotExist(err) {
+			return "", err
+		}
 
-	return findMainGo(parentDir)
+		cwd = filepath.Dir(cwd)
+		if cwd == "/" || cwd == "" {
+			return "", fmt.Errorf("无法找到项目根目录")
+		}
+	}
 }
 
 func getConfigPath() string {
-	currentDir, err := os.Getwd()
+	projectPath, err := getProjectPath()
 	if err != nil {
-		fmt.Println("Error getting current directory:", err)
-		panic(err)
-	}
-
-	dirWithMainGo, err := findMainGo(currentDir)
-	if err != nil {
-		fmt.Println("Error finding root path 'main.go':", err)
-		panic(err)
+		panic(fmt.Sprintf("Error get project path: %+v", err))
 	}
 
 	configFile := "config.yml"
@@ -70,7 +71,7 @@ func getConfigPath() string {
 		configFile = fmt.Sprintf("config-%s.yml", env)
 	}
 
-	return filepath.Join(dirWithMainGo, "conf", configFile)
+	return filepath.Join(projectPath, "conf", configFile)
 }
 
 // 从环境变量读取一些配置
@@ -85,15 +86,12 @@ func readConfigFromEnv(conf *Config) {
 func init() {
 	dataBytes, err := os.ReadFile(getConfigPath())
 	if err != nil {
-		fmt.Println("Error reading config file:", err)
-		panic(err)
+		panic(fmt.Sprintf("Error reading config file: %+v", err))
 	}
 
-	config = &Config{}
 	err = yaml.Unmarshal(dataBytes, &config)
 	if err != nil {
-		fmt.Println("Error unmarshalling config:", err)
-		panic(err)
+		panic(fmt.Sprintf("Error unmarshalling config: %+v", err))
 	}
 	if env != "local" {
 		readConfigFromEnv(config)
@@ -102,6 +100,6 @@ func init() {
 	fmt.Printf("config init success, config: %+v\n", config)
 }
 
-func GetConfig() *Config {
+func GetConfig() Config {
 	return config
 }
