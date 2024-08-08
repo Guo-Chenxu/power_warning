@@ -43,7 +43,7 @@ jobs:
 
     - name: Handle API failure
       continue-on-error: true
-      if: failure()
+      if: steps.run-go.outcome != 'success'
       run: |
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
@@ -70,7 +70,7 @@ jobs:
 
     - name: Push Error log to the failure branch
       continue-on-error: true
-      if: failure()
+      if: steps.run-go.outcome != 'success'
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
