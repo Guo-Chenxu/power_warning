@@ -42,7 +42,6 @@ jobs:
     - name: Handle API failure
       if: steps.run-go.outcome != 'success'
       run: |
-        git rm -rf .
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
 
