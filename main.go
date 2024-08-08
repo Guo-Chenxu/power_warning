@@ -22,7 +22,6 @@ func main() {
 	}
 	fmt.Printf("当前电量信息：%+v\n", power)
 
-	power.D.Data.Time = "" // 测试action失败代码
 	if power.D.Data.Time == "" {
 		// 查询错误终止, 退出代码为 1
 		content := fmt.Sprintf("查询错误，未查询到信息<br>告警阈值：%.2f 度，剩余电量：%.2f 度，当前时间：%s",
