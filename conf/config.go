@@ -94,7 +94,7 @@ func init() {
 		panic(fmt.Sprintf("Error unmarshalling config: %+v", err))
 	}
 	if env != "local" {
-		readConfigFromEnv(config)
+		readConfigFromEnv(&config)
 	}
 
 	fmt.Printf("config init success, config: %+v\n", config)
