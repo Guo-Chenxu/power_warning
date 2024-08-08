@@ -28,18 +28,11 @@ jobs:
         go-version: '1.20' 
 
     - name: Run application
-      id: run-go-program
+      id: run-go
       continue-on-error: true
       run: |
         go mod tidy
         go run main.go
-        exit_code=$?
-        if [ $exit_code -ne 0 ]; then
-          echo "Error: Command failed with exit code $exit_code"
-          ll
-        else
-          echo "Command executed successfully"
-        fi
     
     - name: Checkout code failure branch
       uses: actions/checkout@v3
@@ -47,7 +40,7 @@ jobs:
         ref: failure
 
     - name: Handle API failure
-      if: steps.run-go-program.outputs.exit-code != 0
+      if: failure() && steps.run-go.outcome != 'success'
       run: |
         current_date_time=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
         echo "Current Date and Time (UTC+8): $current_date_time"
@@ -73,7 +66,7 @@ jobs:
         fi
 
     - name: Push Error log to the failure branch
-      if: steps.run-go-program.outputs.exit-code != 0
+      if: failure() && steps.run-go.outcome != 'success'
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
